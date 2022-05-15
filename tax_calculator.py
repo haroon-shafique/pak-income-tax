@@ -2,6 +2,30 @@
 
 print("Income Tax Calculation on Salaries in Pakistan")
 
+print("")
+print("Usage:")
+print("You'll need to input taxable income for each month separately in the current version")
+print("")
+
+# Set to True for Verbose Printing
+debug = False
+
+months_dict = {
+  0 : "Jul",
+  1 : "Aug",
+  2 : "Sep",
+  3 : "Oct",
+  4 : "Nov",
+  5 : "Dec",
+  6 : "Jan",
+  7 : "Feb",
+  8 : "Mar",
+  9 : "Apr",
+  10: "May",
+  11: "Jun",
+}
+
+
 #               [slab, tax_percent, base_tax]
 tax_slabs_dict = {
   "slab_5"    : [600000,   5,    0       ],
@@ -17,39 +41,63 @@ tax_slabs_dict = {
   "slab_35"   : [75000000, 35,   21420000]
 }
 
-monthly_taxable_income = int(input("Input Monthly Salary (Taxable): "))
-yearly_taxable_income  = 12 * monthly_taxable_income
+tax_deduction_dict = {}
+total_taxable_income = 0
+total_tax_deducted = 0
 
-current_slab        = 0
-current_tax_percent = 0
-current_base_tax    = 0
-for slab_value in tax_slabs_dict.values():
-  slab        = slab_value[0]
-  tax_percent = slab_value[1]
-  base_tax    = slab_value[2]
+for n_month in range(0, 12):
+  this_month_taxable_income = int(input("Input Taxable Salary for %s: " % (months_dict[n_month])))
+  yearly_taxable_income     = total_taxable_income + ((12 - n_month) * this_month_taxable_income)
 
-  if (yearly_taxable_income > current_slab and yearly_taxable_income <= slab):
+  current_slab        = 0
+  current_tax_percent = 0
+  current_base_tax    = 0
+
+  for slab_value in tax_slabs_dict.values():
+    slab        = slab_value[0]
+    tax_percent = slab_value[1]
+    base_tax    = slab_value[2]
+
+    if (yearly_taxable_income > current_slab and yearly_taxable_income <= slab):
+      if (debug):
+        print("")
+        print("Tax Slab:",       current_slab)
+        print("Tax Percentage:", current_tax_percent)
+        print("Base Tax:",       current_base_tax)
+      break
+    else:
+      current_slab        = slab
+      current_tax_percent = tax_percent
+      current_base_tax    = base_tax
+
+  yearly_income_tax     = current_base_tax + (yearly_taxable_income - current_slab) * (current_tax_percent / 100)
+  this_month_income_tax = (yearly_income_tax - total_tax_deducted) / (12 - n_month)
+
+  yearly_income_after_tax  = yearly_taxable_income - yearly_income_tax
+  monthly_income_after_tax = this_month_taxable_income - this_month_income_tax
+
+  print("")
+  print("%s Income (Taxable): Rs." % (months_dict[n_month]), this_month_taxable_income)
+  print("%s Income Tax: Rs." % (months_dict[n_month]), this_month_income_tax)
+  print("%s Income (Taxable) after Tax: Rs." % (months_dict[n_month]), monthly_income_after_tax)
+  if (debug):
     print("")
-    print("Tax Slab:",       current_slab)
-    print("Tax Percentage:", current_tax_percent)
-    print("Base Tax:",       current_base_tax)
-    break
-  else:
-    current_slab        = slab
-    current_tax_percent = tax_percent
-    current_base_tax    = base_tax
+    print("Yearly Income (Taxable): Rs.", yearly_taxable_income)
+    print("Yearly Income Tax: Rs.", yearly_income_tax)
+    print("Yearly Income (Taxable) after Tax: Rs.", yearly_income_after_tax)
 
-yearly_income_tax  = current_base_tax + (yearly_taxable_income - current_slab) * (current_tax_percent / 100)
-monthly_income_tax = yearly_income_tax / 12
+  total_taxable_income += this_month_taxable_income
+  total_tax_deducted   += this_month_income_tax
 
-yearly_income_after_tax  = yearly_taxable_income - yearly_income_tax
-monthly_income_after_tax = monthly_taxable_income - monthly_income_tax
+  if (n_month < 11):
+    print("")
+    do_calculate_next = input("Want to calculate for next month (y/n)? ").lower()
+    print("")
+    if (do_calculate_next == "n"):
+      break
+    else:
+      continue
 
 print("")
-print("Monthly Income (Taxable):", monthly_taxable_income)
-print("Monthly Income Tax:", monthly_income_tax)
-print("Monthly Income (Taxable) after Tax:", monthly_income_after_tax)
-print("")
-print("Yearly Income (Taxable):", yearly_taxable_income)
-print("Yearly Income Tax:", yearly_income_tax)
-print("Yearly Income (Taxable) after Tax:", yearly_income_after_tax)
+print("Total Income (Taxable): Rs.", total_taxable_income)
+print("Total Tax Deducted: Rs.", total_tax_deducted)
