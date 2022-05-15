@@ -25,4 +25,4 @@ python3 tax_calculator.py
 This is a work in progress. I'd appreciate your contributions to this project.
 
 ## Contact
-If you have any queries, feel free to contact the author at his `haroon.zaroon.457@gmail.com`. 
+If you have any queries, feel free to contact the author at his email `haroon.zaroon.457@gmail.com`. 
